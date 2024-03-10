@@ -9,13 +9,13 @@ import com.naananaan.peli.Herkut.HerkutType;
 public class Koira {
     private String rotu;
     private String koiranNimi;
-    private double ulkoilu;
+    private String ulkoilu;
     private double minun;
     private double budjetti;
     private Harrastus harrastus = new Harrastus(HarrastusType.OLEILU);
     private List <Herkut> herkuts = new ArrayList<>();
 
-    public Koira(String rotu, String koiranNimi, double ulkoilu, double budjetti, double minun){
+    public Koira(String rotu, String koiranNimi, String ulkoilu, double budjetti, double minun){
         this.rotu = rotu;
         this.koiranNimi = koiranNimi;
         this.ulkoilu = ulkoilu;
@@ -24,7 +24,7 @@ public class Koira {
     
         //Herkut.add(new Herkut);
     }
-    public Koira(double rotu2, double koiranNimi2, double ulkoilu2, double budjetti2) {
+    public Koira(String rotu2, String koiranNimi2, String ulkoilu2, double budjetti2) {
         //TODO Auto-generated constructor stub
     }
     public void updateHarrastus(HarrastusType type) {
@@ -50,7 +50,7 @@ public class Koira {
     public String getKoiranNimi() {
         return this.koiranNimi;
     }
-    public double getUlkoilu() {
+    public String getUlkoilu() {
         return this.ulkoilu;
     }
     public double getMinun() {

@@ -34,33 +34,39 @@ public class KoirapeliRestController {
 
     @GetMapping("/")
     public String info() {
-        return "******Koirapeli*******<br><br>\n\n" +
-        "----- (info) - peli selitettynä <br>\n";
-        // valitse koirarotu
-        // valitse nimi
-        // valitse sopivat valjaat ja hihna ulkoilu
-        // valitse ruoka- ja juomakipot ruokailu
-        // asiat vähenee valintojen myötä
+        return "******KOIRAPELI*******<br><br>\n\n" +
+        "----- (info) - peli selitettynä--- <br>\n"+
+        "-----Kun aloitat pelaamisen, Anna ensin koiran rotu, nimi, hihnan ja valjaiden väri sekä käytössä oleva budjetti--- <br>\n"+
+        "-----Voit aloittaa valitsemaan koirallesi harrastuksen sekä herkut --- <br>\n" +
+        "-----Voit tarvittaessa muokata sisustusvalintojasi--- <br>\n"+
+        "-----Käytettävissä oleva budjetti vähenee valintojesi edetessä --- <br>\n"+
+        "----- --- <br>\n"+
+        "-----Mukavia hetki koirasi kanssa --- <br>\n"+
 
+        "***** KOMENNOT ***** <br><br><br>\n\n"+
+
+        "-----Aloita peli kutsumalla: /start <br>\n" +
+        "-----Anna tiedot: rotu, nimi, ulkoilu, budjetti <br>\n" +
+        "<br>\n **** GET <br>\n" +
+        "-----Kutsu koira: /koira --- <br>\n" +
+        "-----Kutsu budjetti: /budjetti --- <br>\n" +
+        "-----Kutsu herkut: /herkut --- <br>\n" +
+        "-----Kutsu harrastus: /harrastus --- <br>\n" +
+        "-----Lista valittavista herkuista: /herkut/types --- <br>\n"+
+        "-----Lista valittavista harrastuksista: /harrastus/types --- <br>\n";
 
 
     }
 
     @PostMapping("/aloita")
     public String startGame(@RequestBody StartGameRequest request) {
-        this.game = new Koira(String.valueOf(request.rotu()), String.valueOf(request.koiranNimi()), request.ulkoilu(), request.budjetti(), 0.0);
+        this.game = new Koira(String.valueOf(request.rotu()), String.valueOf(request.koiranNimi()), String.valueOf(request.ulkoilu()), request.budjetti(), 0.0);
         this.koiranAsiat = new KoiranAsiat(game, request.budjetti());
-        return "Valitsit rodun: " + game.getRotu() + ". Annoit hänelle nimen : " + game.getKoiranNimi() + "ja sille valitsit " + game.getUlkoilu() + " valjaat ja hihnan. Nyt pääset hoitamaan koiraasi! Sinulla on käytettävissä: " + koiranAsiat.getBudjetti() + "euroa.";
+        return "Valitsit rodun: " + game.getRotu() + ". Annoit hänelle nimen : " + game.getKoiranNimi() + " ja sille valitsit " + game.getUlkoilu() + " valjaat ja hihnan. Nyt pääset hoitamaan koiraasi! Sinulla on käytettävissä: " + koiranAsiat.getBudjetti() + "euroa.";
     }
 
     
-    @GetMapping("/koirani")
-    public double getKoiraniMinun() {
-        if (game == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not started");
-        }
-        return game.getMinun();
-    }
+
     @GetMapping("/budjetti")
     public double getBudjetti() {
         return koiranAsiat.getBudjetti() - koiranAsiat.getKoira().getMenot(); 
@@ -79,27 +85,7 @@ public class KoirapeliRestController {
     return koiranAsiat.getKoira(); 
 }
 
-@PutMapping("/herkut/{id}") 
-public void updateHerkut(@PathVariable Integer id, @RequestBody String type) {
-    HerkutType newType = HerkutType.valueOf(type.trim());
-    Herkut updatedHerkut = new Herkut(koiranAsiat.getKoira().getHerkuts().get(id).getMinun(), newType);
-    if (checkBudget(koiranAsiat.getKoira().getHerkuts().get(id), updatedHerkut)) {
-        koiranAsiat.getKoira().updateHerkut(koiranAsiat.getKoira().getHerkuts(), id, newType);
-    } else {
-        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Budjetti ei riitä tähän herkkuun");
-    }
-}
 
-@PutMapping("/harrastus") 
-public void updateHarrastus(@RequestBody String type) {
-    HarrastusType newType = HarrastusType.valueOf(type.trim());
-    Harrastus updatedHarrastus = new Harrastus(newType);
-    if (checkBudjetti(koiranAsiat.getKoira().getHarrastus(), updatedHarrastus)) {
-        koiranAsiat.getKoira().updateHarrastus(newType);
-    } else {
-        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Budjetti ei riitä tähän harrastukseen");
-    }
-}
 
 @GetMapping("/herkut/types")
     public List<HerkutType> getHerkutTypes() {
@@ -111,7 +97,7 @@ public void updateHarrastus(@RequestBody String type) {
         return koiranAsiat.getAvailableHarrastusTypes();
     }
 
-    private boolean checkBudget(ValitutTuotteet oldHerkut, ValitutTuotteet updatedHerkut) {
+    private boolean checkBudjetti(ValitutTuotteet oldHerkut, ValitutTuotteet updatedHerkut) {
         double budjetti = koiranAsiat.getBudjetti();
         budjetti -= koiranAsiat.getKoira().getMenot();
 
